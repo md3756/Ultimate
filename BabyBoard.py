@@ -16,10 +16,11 @@ class BabyBoard:
         self.move_counter = 0
         self.winner = None
 
-    def check_win(self, x, y, token):
+    def check_win(self, x, y, player):
         """
             Check if putting token in (x,y) is a winning move for this board.
         """
+        token = player.token
         if self.move_counter < 3: return None
         # Check if all elements of row x == token
         if all(item == self.board[x][0] for item in self.board[x]):
@@ -38,7 +39,7 @@ class BabyBoard:
             self.winner = TIE
         return self.winner
 
-    def move(self, x, y, token):
+    def move(self, x, y, player):
         """
             Play a move.
             input:
@@ -51,9 +52,10 @@ class BabyBoard:
             raise ValueError("Position " + str((x,y)) + " is taken.")
 
         self.move_counter += 1
-        self.board[x][y] = token
+        self.board[x][y] = player.token
 
-        if self.check_win(x, y, token):
+        if self.check_win(x, y, player):
+            player.points += 1
             print("WINNER:", self.winner)
         else:
             print("STILL NO WINNER, LOSER")
