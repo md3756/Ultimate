@@ -1,5 +1,4 @@
 import BabyBoard as bb
-# import Player as player
 
 class MamaBoard:
     def __init__(self, dimension=3):
@@ -77,14 +76,3 @@ class MamaBoard:
             l.append((counter, i))
             counter -= 1
         return l
-
-
-# mb = MamaBoard(5)
-# mb.print_mama_board()
-# exit(0)
-# while True:
-#     value = input("Input a move (mbx mby bbx bby token): ")
-#     if value == "q": break
-#     mbx, mby, bbx, bby, token = value.split(" ")
-#     mb.move(int(mbx), int(mby), int(bbx), int(bby), token)
-#     mb.print_mama_board()

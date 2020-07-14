@@ -3,17 +3,21 @@ https://flask-socketio.readthedocs.io/en/latest/
 
 Functionality:
 - DONE: baby tic board: 2d array
-- mama tic board: array of small boards --> 3d array
-  - assume right player 
+- DONE:mama tic board: array of small boards --> 3d array
+  - assume right player
   - TIE
   - win
   -check valid babyboard/move
   -freebie
     -check valid board, iff board won/tie -- allow player to go anywhere open
-- players
+- DONE: players
   - points
-- game manager
+- DONE: game manager
   - keep track of whose turn it is
   - instantiate stuff like board, players, etc.
 - only allow players to go in legal spots
 - finish game when tie or someone wins
+
+to do:
+error checking (make sure input stuff like num dimensions, players, etc, are valid (greater than 0) otherwise do default values)
+allow bad moves to have redos

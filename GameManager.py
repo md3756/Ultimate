@@ -16,7 +16,6 @@ class GameManager:
         self.dimension = int(input("Input number of dimensions: "))
         self.game = mb.MamaBoard(self.dimension)
 
-
     def play(self):
         print("Starting game...")
         while True:
