@@ -1,0 +1,15 @@
+https://www.raywenderlich.com/2614-multiplayer-game-programming-for-teens-with-python-part-1
+https://flask-socketio.readthedocs.io/en/latest/
+
+Functionality:
+- DONE: baby tic board: 2d array
+- mama tic board: array of small boards --> 3d array
+  - TIE
+  - win
+  -check valid babyboard/move
+  -freebie
+    -check valid board, iff board won/tie -- allow player to go anywhere open
+- players
+  - cant go if other player's turn
+- only allow players to go in legal spots
+- finish game when tie or someone wins
