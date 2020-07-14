@@ -1,6 +1,8 @@
 TIE = "tie"
 class BabyBoard:
-
+    """
+        Class representing one of the 9 sub-boards in the Ultimate game.
+    """
     def __init__(self):
         """
         Example board:
@@ -36,7 +38,7 @@ class BabyBoard:
             self.winner = TIE
         return self.winner
 
-    def add(self, x, y, token):
+    def move(self, x, y, token):
         """
             Play a move.
             input:
@@ -65,15 +67,15 @@ class BabyBoard:
 
 def random_test():
     bb = BabyBoard()
-    bb.add(0,0,"o")
-    bb.add(0,1,"x")
-    bb.add(0,2,"o")
-    bb.add(1,0,"o")
-    bb.add(1,1,"x")
-    bb.add(1,2,"x")
-    bb.add(2,0,"x")
-    bb.add(2,1,"x")
-    bb.add(2,2,"x")
+    bb.move(0,0,"o")
+    bb.move(0,1,"x")
+    bb.move(0,2,"o")
+    bb.move(1,0,"o")
+    bb.move(1,1,"x")
+    bb.move(1,2,"x")
+    bb.move(2,0,"x")
+    bb.move(2,1,"x")
+    bb.move(2,2,"x")
     bb.print_board()
 
-random_test()
+# random_test()
