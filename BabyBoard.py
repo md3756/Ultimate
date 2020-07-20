@@ -15,6 +15,7 @@ class BabyBoard:
         self.board = [[None, None, None], [None, None, None], [None, None, None]]
         self.move_counter = 0
         self.winner = None
+        self.dimension = 3
 
     def check_win(self, x, y, player):
         """
