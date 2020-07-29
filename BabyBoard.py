@@ -1,9 +1,11 @@
+import pygame, math
+
 TIE = "tie"
 class BabyBoard:
     """
         Class representing one of the 9 sub-boards in the Ultimate game.
     """
-    def __init__(self):
+    def __init__(self, buffer, draw_length, mama_buffer, screen):
         """
         Example board:
             [[?,?,?],[?,?,?],[?,?,?]]
@@ -16,6 +18,15 @@ class BabyBoard:
         self.move_counter = 0
         self.winner = None
         self.dimension = 3
+        self.buffer = buffer
+        self.draw_length = draw_length
+        self.mama_buffer = mama_buffer
+        self.screen = screen
+
+        print("Mama buffer:", self.mama_buffer)
+        print("Baby buffer:", self.buffer)
+        print("Draw length:", self.draw_length)
+        # exit()
 
     def check_win(self, x, y, player):
         """
@@ -60,6 +71,25 @@ class BabyBoard:
             print("WINNER:", self.winner)
         else:
             print("STILL NO WINNER, LOSER")
+
+    def draw_board(self, offset_x, offset_y):
+        color = (255,0,0)
+        previous_x = 2*self.buffer + self.draw_length
+        previous_y = 2*self.buffer + self.draw_length
+        line_width = math.floor(5)
+        for i in range(1, self.dimension):
+            # Vertical
+            start = (previous_x*offset_x + self.buffer + self.mama_buffer + i*self.draw_length/self.dimension, previous_y*offset_y + self.buffer + self.mama_buffer)
+            end = (start[0], start[1] + self.draw_length)
+            pygame.draw.line(self.screen, color, start, end, line_width)
+
+            print(start, end)
+            # Horizontal
+            start = (previous_x*offset_x + self.buffer + self.mama_buffer, previous_y*offset_y + self.buffer + self.mama_buffer + i*self.draw_length/self.dimension)
+            end = (start[0] + self.draw_length, start[1])
+            pygame.draw.line(self.screen, color, start, end, line_width)
+            print(start, end)
+            pygame.display.flip()
 
     def print_board(self):
         """

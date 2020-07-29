@@ -6,26 +6,20 @@ class GameManager:
     def __init__(self):
         self.players = []
         tokens = ['x', 'o']
-        self.num_players = 2 #int(input("Input number of players: "))
+        self.num_players = 2 #int(input("Input number of players: ")) FIX THISSSSSSSSSSSSSSSSSS
         # Initialize all players with tokens
         for i in range(self.num_players):
-            token = tokens[i] #input("Input player " + str(i)+ "'s token: ")
+            token = tokens[i] #input("Input player " + str(i)+ "'s token: ") FIX THISSSSSSSSSSSSSSSSSS
             self.players.append(p.Player(token))
 
         # Index of player whose turn it is
         self.turn = 0
 
-        self.dimension = 3 #int(input("Input number of dimensions: "))
-        self.game = mb.MamaBoard(self.dimension)
+        self.dimension = 3 #int(input("Input number of dimensions: ")) FIX THISSSSSSSSSSSSSSSSSS
 
         pygame.init()
         self.font = pygame.font.SysFont('Arial', 20)
         self.width, self.height = 600, 600
-
-        # Mamaboard dimensions are equal to screen dimensions
-        self.game.length = self.width
-        self.baby_length = math.floor(self.game.length / self.dimension)
-
         #2
         #initialize the screen
         self.screen = pygame.display.set_mode((self.width, self.height))
@@ -36,60 +30,13 @@ class GameManager:
         self.clock=pygame.time.Clock()
 
         # Draw Mamaboard
-        self.draw_board(self.game)
+        self.game = mb.MamaBoard(self.width, self.screen, self.dimension)
+        self.game.draw_board()
 
         # Iterate over all babyboards within mamaboard and assign dimensions
-        for offset_w, babylist in enumerate(self.game.board):
-            for offset_h, baby in enumerate(babylist):
-                baby.length = self.baby_length
-                self.draw_board(baby, offset_w, offset_h)
-            #     break
-            # break
-
-
-
-
-    def draw_board(self, board_obj, offset_w=0, offset_h=0):
-        self.sub = math.floor(self.baby_length/10)
-        if board_obj.length == self.width:
-            color = (0,0,0)
-            add_w, add_h = self.sub, self.sub
-        else:
-            # HERE ARE OUR PROBLEMS:
-            # SHE'S MIGRATING: TOP ROW OF BOARDS ARE TOO CLOSE TO THE TOP/LEFT,
-            # BOTTOM ROW OF BOARDS ARE TOO CLOSE TO THE BOTTOM/RIGHT. ONLY BABY
-            # BOARD THAT WORKS IS THE CENTER BOARD. NEED TO MULTIPLY SELF.SUB
-            # BELOW BY SOME VALUE TO GET ALL BOARDS TO BE CENTERED WITHIN THE
-            # PROVIDED SPACE
-            # MAYBE: DO SOME EXAMPLES, FIGURE OUT EXACT LOCATION OF START AND
-            # END POSITIONS FOR A FEW BOARDS AND CALCULATE SELF.SUB SHOULD BE
-            # AND SEE WHAT THE RELATIONSHIP IS.
-            add_w = self.sub*(0.5 + 1/(offset_w + 1)) + (board_obj.length)*(offset_w)
-            add_h = self.sub*(0.5 + 1/(offset_h + 1)) + (board_obj.length)*(offset_h)
-            print(offset_w, offset_h)
-            color = (255,0,0)
-
-        line_width = math.floor(self.width/60)
-        self.draw_length =  board_obj.length - 2*self.sub
-        # Drawing a board
-        for i in range (1, board_obj.dimension):
-            print(i, board_obj.dimension)
-
-            # Horizontal
-            # + offset_w*self.draw_length, + offset_h*self.draw_length
-            start_pos = (add_w , add_h + self.draw_length*(i/board_obj.dimension))
-            end_pos = (start_pos[0] + self.draw_length, start_pos[1])
-            pygame.draw.line(self.screen, color, start_pos, end_pos, line_width)
-
-            # Vertical
-            start_pos = (add_w + self.draw_length*(i/board_obj.dimension), add_h)
-            end_pos = (start_pos[0], start_pos[1] + self.draw_length)
-            pygame.draw.line(self.screen, color, start_pos, end_pos, line_width)
-            print(start_pos, end_pos)
-
-
-
-        pygame.display.flip()
+        for offset_x, babylist in enumerate(self.game.board):
+            for offset_y, baby in enumerate(babylist):
+                baby.draw_board(offset_x, offset_y)
 
 
     def convert(self, mouse_posn, divisor):
@@ -99,9 +46,9 @@ class GameManager:
         # [0, 1] [1, 1] --> full_board: 900 perf_mouse_posn: [450, 150]
         # [0, 1] [1, 2] --> [550, 150]
         # [1, 1] [0, 1] --> [450, 350]
-        third = self.baby_length/ 3
-        x = mama_coord[1]*self.baby_length + baby_coord[1]*third + third/ 2 - self.sub/3
-        y = mama_coord[0]*self.baby_length + baby_coord[0]*third + third/ 2 - self.sub/3
+        third = self.draw_length/ 3
+        x = mama_coord[1]*self.baby_length + baby_coord[1]*third + third/ 2 #- self.sub/3
+        y = mama_coord[0]*self.baby_length + baby_coord[0]*third + third/ 2 #- self.sub/3
         print(x, y)
 
         return (x,y)

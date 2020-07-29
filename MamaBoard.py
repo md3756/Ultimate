@@ -1,14 +1,23 @@
 import BabyBoard as bb
+import math, pygame
 
 class MamaBoard:
-    def __init__(self, dimension=3):
+    def __init__(self, length, screen, dimension=3):
+        self.length = length
+        self.screen = screen
         self.next_move = (None, None)
         self.dimension = dimension
         self.board = []
+        self.buffer = 0.1*self.length
+        self.draw_length = self.length - 2*self.buffer
+
+        print("Mama draw length:", self.draw_length)
+        baby_buff = self.buffer/self.dimension
+        baby_draw_length = (self.draw_length/self.dimension) - 2*baby_buff
         for i in range(self.dimension):
             self.board.append([])
             for j in range(self.dimension):
-                self.board[i].append(bb.BabyBoard())
+                self.board[i].append(bb.BabyBoard(baby_buff, baby_draw_length, self.buffer, self.screen))
 
     def move(self, mbx, mby, bbx, bby, player):
         # Either freebie or valid location on board
@@ -31,6 +40,21 @@ class MamaBoard:
         else:
             raise ValueError("Position " + str((mbx,mby)) + " is invalid.")
 
+    def draw_board(self):
+        color = (0,0,0)
+        line_width = math.floor(self.length/60)
+        for i in range(1, self.dimension):
+            # Vertical
+            start = (self.buffer + i*self.draw_length/self.dimension, self.buffer)
+            end = (start[0], start[1] + self.draw_length)
+            pygame.draw.line(self.screen, color, start, end, line_width)
+
+            # Horizontal
+            start = (self.buffer, self.buffer + i*self.draw_length/self.dimension)
+            end = (start[0] + self.draw_length, start[1])
+            pygame.draw.line(self.screen, color, start, end, line_width)
+
+        pygame.display.flip()
 
     def print_mama_board(self):
         counter = 0
