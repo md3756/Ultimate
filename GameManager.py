@@ -4,72 +4,101 @@ import pygame, math
 
 class GameManager:
     def __init__(self):
+        """
+            Initialize important parameters for game playing.
+        """
         self.players = []
+        # Temporary default tokens
+        tokens = ["./o.png", "./x.png"]
         # tokens = ['x', 'o']
 
+        # TODO: Have this info input by players
+        self.num_players = 2
 
-        tokens = ["./o.png", "./x.png"]
-
-        self.num_players = 2 #int(input("Input number of players: ")) FIX THISSSSSSSSSSSSSSSSSS
         # Initialize all players with tokens
         for i in range(self.num_players):
-            #input("Input player " + str(i)+ "'s token: ") FIX THISSSSSSSSSSSSSSSSSS
+            # TODO: Have this info input by players
             self.players.append(p.Player(tokens[i]))
 
         # Index of player whose turn it is
         self.turn = 0
 
-        self.dimension = 3 #int(input("Input number of dimensions: ")) FIX THISSSSSSSSSSSSSSSSSS
+        # TODO: Have this info input by players
+        self.dimension = 3
 
         pygame.init()
+
+        # Set initial values for screen and game
         # self.font = pygame.font.SysFont('Arial', 40)
         self.width, self.height = 600, 600
-        #2
-        #initialize the screen
         self.screen = pygame.display.set_mode((self.width, self.height))
-        self.screen.fill((255,255,255))
+        background_color = (255,255,255)
+        self.screen.fill(background_color)
         pygame.display.set_caption("Ultimate TicTacToe")
-        #3
-        #initialize pygame clock
-        self.clock=pygame.time.Clock()
+        self.clock = pygame.time.Clock()
 
-        # Draw Mamaboard
+        # Initialize and draw Mamaboard
         self.game = mb.MamaBoard(self.width, self.screen, self.dimension)
         self.game.draw_board()
 
-        # Iterate over all babyboards within mamaboard and assign dimensions
+        # Iterate over all rows of babyboards within mamaboard
+        # note: offset_x is the row a babyboard is in (from 0 to self.dimension - 1)
         for offset_x, babylist in enumerate(self.game.board):
+            # Iterate over each babyboard within the row babylist
+            # note: offset_y is the column that baby is in (0 to self.dimension - 1)
             for offset_y, baby in enumerate(babylist):
+                # Draw the babyboard
                 baby.draw_board(offset_x, offset_y)
 
-    def update(self, cur_player):
+    def update(self):
+        """
+            Function to process events initiated by the player(s), place a
+            token in the square clicked by the user (if valid), and update the
+            turn variable to allow the next player to move.
+        """
+        # Identify current player based on the integer self.turn
+        cur_player = self.players[self.turn]
+
         # Sleep to make the game 60 fps
         self.clock.tick(60)
-        row_height = self.game.length/self.dimension
 
+        # Retrieve any events that have happened and iterate over all events
         for event in pygame.event.get():
+            # If the event was a click event, player must be trying to make a move
             if pygame.mouse.get_pressed()[0]:
-                #
+                # Get coordinates of where player clicked
                 self.mouse_posn = pygame.mouse.get_pos()
                 # text = self.font.render(cur_player.token, False, (128,0,128))
 
+                # Try to make the move the player indicated
                 try:
-                    # Convert mouse coordinate to equivalent mama board square
+                    # Identify exact square clicked by player from mouse
+                    # position
                     mama_coord, baby_coord = self.game.convert(self.mouse_posn)
                     print("mama, baby",mama_coord, baby_coord)
 
-                    # Given a location (mama_coord and baby_coord), try to place token
-                    self.game.move(mama_coord[0], mama_coord[1], baby_coord[0], baby_coord[1], cur_player)
+                    # Given a location (mama_coord and baby_coord), try to
+                    # place token
+                    self.game.move(mama_coord, baby_coord, cur_player)
 
+                    # Calculate location that player's token should appear on
+                    # board given mouse position
                     location = self.game.place_token(self.mouse_posn)
 
+                    # Display the player's token on the desired location
                     self.screen.blit(cur_player.token, location)
+
                     # Update player to next player since move was made successfully
                     self.turn = (self.turn + 1) % self.num_players
                     break
+
+                # If ValueError is raised, the move was placed in an invalid
+                # location (spot already occupied, within the wrong babyboard,
+                # etc.). Should try again
                 except ValueError:
-                    # Placing token threw exception, move was invalid
                     print("try again friend")
+                # If AssertionError is raised, player did not click mouse
+                # within any of the squares. Should try again
                 except AssertionError:
                     print("out of range")
                     continue
@@ -83,8 +112,13 @@ class GameManager:
         pygame.display.flip()
 
     def play(self):
+        """
+            Function to actually play a game given an initialized GameManager.
+        """
+        # Play forever until player quits the game
         while True:
-            self.update(self.players[self.turn])
+            # Update the board with new moves
+            self.update()
 
 
 gm = GameManager()

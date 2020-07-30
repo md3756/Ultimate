@@ -22,6 +22,8 @@ to do:
 error checking (make sure input stuff like num dimensions, players, etc, are valid (greater than 0) otherwise do default values)
 allow bad moves to have redos
 
+we should really check if it's possible to win a game (babyboard itself or entire game) if the dimension of mamaboard isn't 3. i think it could be a problem
+
 heroku
 
 Website:
