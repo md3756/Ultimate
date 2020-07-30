@@ -21,3 +21,19 @@ Functionality:
 to do:
 error checking (make sure input stuff like num dimensions, players, etc, are valid (greater than 0) otherwise do default values)
 allow bad moves to have redos
+
+heroku
+
+Website:
+- logo & website name
+- input dimension and number of players
+- open up --> enter name and token
+- situation like skribbl.io, send a link to your friends who can enter game and enter name and token
+- start game once all players are present
+- play
+Design Features:
+- highlight nondrant your next move is supposed to be in
+- indicate which nondrants have been won (big tokens covering whole thing)
+- indicate whose turn it is (by token or player name)
+- pop-ups for errors
+-

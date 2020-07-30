@@ -11,13 +11,12 @@ class MamaBoard:
         self.buffer = 0.1*self.length
         self.draw_length = self.length - 2*self.buffer
 
-        print("Mama draw length:", self.draw_length)
-        baby_buff = self.buffer/self.dimension
-        baby_draw_length = (self.draw_length/self.dimension) - 2*baby_buff
+        self.baby_buff = self.buffer/self.dimension
+        self.baby_draw_length = (self.draw_length/self.dimension) - 2*self.baby_buff
         for i in range(self.dimension):
             self.board.append([])
             for j in range(self.dimension):
-                self.board[i].append(bb.BabyBoard(baby_buff, baby_draw_length, self.buffer, self.screen))
+                self.board[i].append(bb.BabyBoard(self.baby_buff, self.baby_draw_length, self.buffer, self.screen))
 
     def move(self, mbx, mby, bbx, bby, player):
         # Either freebie or valid location on board
@@ -26,6 +25,7 @@ class MamaBoard:
             if self.board[mbx][mby].winner == None:
                 # Try to make the move
                 self.board[mbx][mby].move(bbx, bby, player)
+
                 if self.board[mbx][mby].winner:
                     if self.check_win(mbx, mby, player):
                         print("DONE.")
@@ -36,6 +36,8 @@ class MamaBoard:
                 # Otherwise, next move corresponds to current move
                 else:
                     self.next_move = (bbx, bby)
+            else:
+                raise ValueError("Position " + str((mbx,mby)) + " is invalid.")
         # Not a valid move
         else:
             raise ValueError("Position " + str((mbx,mby)) + " is invalid.")
@@ -56,6 +58,57 @@ class MamaBoard:
 
         pygame.display.flip()
 
+    def place_token(self, mouse_posn):
+        """
+            Adjust mouse position to be centered within a square.
+
+        """
+
+        mod = self.baby_draw_length/3 # 3 = self.dimension for a babyboard object
+
+        x = mouse_posn[0] - (mouse_posn[0] % mod) # + mod/2
+        y = mouse_posn[1] - (mouse_posn[1] % mod) # + mod/2
+
+        return (x, y)
+
+    def convert(self, mouse_posn):
+        divisor = self.draw_length/self.dimension
+        x = int((mouse_posn[1] - self.buffer) // divisor)
+        y = int((mouse_posn[0] - self.buffer) // divisor)
+        mama = [x, y]
+
+        # Check that mama coordinates are valid
+        assert 0 <= x < self.dimension
+        assert 0 <= y < self.dimension
+
+        # Convert original mouse position to standard mouse position for one baby board
+        # (x and y values are between 0 and width of a baby board's allocated space)
+        # x = mouse_posn[0] - mama[1]* divisor - mama[1] * 2*self.baby_buff - self.buffer - self.baby_buff
+        # y = mouse_posn[1] - mama[0]* divisor - mama[0] * 2*self.baby_buff - self.buffer - self.baby_buff
+        x = mouse_posn[0] - (mama[1]*divisor + self.buffer)
+        y = mouse_posn[1] - (mama[0]*divisor + self.buffer)
+        new_mouse_posn = (int(x), int(y))
+        # print("buff:", self.buffer)
+        # print("bbuff:", self.baby_buff)
+        # print("dl:", self.draw_length)
+        # print("old:", mouse_posn)
+        # print("new:", new_mouse_posn)
+
+        divisor = self.baby_draw_length/3
+        x = int((new_mouse_posn[1] - self.baby_buff) // divisor)
+        y = int((new_mouse_posn[0] - self.baby_buff) // divisor)
+
+        # Check that baby coordinates are valid
+        assert 0 <= x < self.dimension
+        assert 0 <= y < self.dimension
+
+        #did not work --ignore
+        # x = int((mouse_posn[0] - self.buffer - self.baby_buff) - mama[1] * (divisor + self.baby_buff))
+        # y = int((mouse_posn[1] - self.buffer - self.baby_buff) - mama[0] * (divisor + self.baby_buff))
+        baby = [x, y]
+
+        return mama, baby
+
     def print_mama_board(self):
         counter = 0
         # self.board = [[baby,baby,baby],[etc,],[]]
@@ -74,7 +127,6 @@ class MamaBoard:
         """
             Check if putting token in (x,y) is a winning move for this board.
         """
-        # if self.move_counter < 3: return None
         # Check if all elements of row x == token
         if all(item.winner == self.board[mbx][0].winner for item in self.board[mbx]):
             print("WINNER:", player.token)
@@ -85,12 +137,14 @@ class MamaBoard:
         elif all(self.board[a][a].winner == self.board[0][0].winner for a in range(1, self.dimension)):
             print("WINNER:", player.token)
         else:
-            coords = self.coord_list
-            if all(self.board[a][b].winner == coords[0].winner for a, b in coords[1:]):
+            coords = self.coord_list()
+            first_winner = self.board[coords[0][0]][coords[0][1]].winner
+            if all(self.board[a][b].winner == first_winner for a, b in coords[1:]):
                 print("WINNER:", player.token)
             else:
                 print("NO WINNER")
                 return False
+
         return True
 
     def coord_list(self):
